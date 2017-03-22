@@ -849,7 +849,7 @@ public class GaugeBuilder<B extends GaugeBuilder<B>> {
                     break;
                 case DASHBOARD   :
                     CONTROL.setKnobPosition(Pos.BOTTOM_CENTER);
-                    CONTROL.setDecimals(0);
+                    //CONTROL.setDecimals(0);
                     CONTROL.setBarBackgroundColor(Color.LIGHTGRAY);
                     CONTROL.setBarColor(Color.rgb(93,190,205));
                     CONTROL.setStartFromZero(false);
