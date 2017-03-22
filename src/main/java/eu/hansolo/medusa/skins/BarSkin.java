@@ -21,6 +21,7 @@ import eu.hansolo.medusa.Gauge;
 import eu.hansolo.medusa.Gauge.ScaleDirection;
 import eu.hansolo.medusa.tools.ConicalGradient;
 import eu.hansolo.medusa.tools.Helper;
+import eu.hansolo.medusa.tools.MathUtils;
 import javafx.beans.InvalidationListener;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
@@ -74,7 +75,6 @@ public class BarSkin extends GaugeSkinBase {
 		if (gauge.isAutoScale())
 			gauge.calcAutoScale();
 		range = gauge.getRange();
-		System.out.println(gauge);
 		angleStep = -ANGLE_RANGE / range;
 		formatString = new StringBuilder("%.").append(Integer.toString(gauge.getDecimals())).append("f").toString();
 		locale = gauge.getLocale();
@@ -104,17 +104,12 @@ public class BarSkin extends GaugeSkinBase {
 		double minValue = this.gauge.getMinValue();
 		double maxValue = this.gauge.getMaxValue();
 		double alfa = (90 + 360 + Math.atan2(y, x) * (180 / Math.PI)) % 360;
-
-		double value = minValue + ((alfa * (maxValue - minValue)) / 360);
-		// System.out.println(String.format("min: %s, max: %s, value: %s",
-		// minValue, maxValue, value));
+		
+		double value = MathUtils.normalize(alfa, 0, 360, minValue, maxValue);
 		int decimal = this.gauge.getDecimals();
-		if (decimal > 0) {
-			value *= 10 * decimal;
-			value = Math.round(value);
-			value /= 10 * decimal;
-		}
-
+		value *= Math.pow(10, decimal);
+		value = Math.round(value);
+		value /= Math.pow(10, decimal);
 		this.gauge.setValue(value);
 		this.resize();
 	}
@@ -125,13 +120,9 @@ public class BarSkin extends GaugeSkinBase {
 		EventType<? extends MouseEvent> eventType = event.getEventType();
 		double width = arc.getCenterX() * 2 * arc.getScaleX();
 
-		// System.out.println(String.format("oryginal: x:%s, y:%s",
-		// event.getX(), event.getY()));
-
 		double x = event.getX() - width / 2;
 		double y = event.getY() - width / 2;
 
-		// System.out.println(String.format("x:%s, y:%s", x, y));
 		if (eventType.equals(MouseEvent.MOUSE_PRESSED)) {
 			entered = true;
 			calculateNewValue(x, y);
@@ -234,8 +225,7 @@ public class BarSkin extends GaugeSkinBase {
 				addMouseEvents(dot);
 				addMouseEvents(fakeDot);
 			}
-		}
-		else if ("VISIBILITY".equals(EVENT_TYPE)) {
+		} else if ("VISIBILITY".equals(EVENT_TYPE)) {
 			Helper.enableNode(titleText, !gauge.getTitle().isEmpty());
 			Helper.enableNode(unitText, !gauge.getUnit().isEmpty());
 		}

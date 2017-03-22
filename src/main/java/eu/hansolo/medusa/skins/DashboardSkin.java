@@ -20,6 +20,8 @@ import eu.hansolo.medusa.Fonts;
 import eu.hansolo.medusa.Gauge;
 import eu.hansolo.medusa.Section;
 import eu.hansolo.medusa.tools.Helper;
+import eu.hansolo.medusa.tools.MathUtils;
+
 import java.util.List;
 import java.util.Locale;
 import javafx.beans.InvalidationListener;
@@ -130,13 +132,15 @@ public class DashboardSkin extends GaugeSkinBase {
 	private void calculateNewValue(double x, double y) {
 
 		double alfa = 180 - Math.atan2(y, x) * (180 / Math.PI);
-		double value = minValue + ((alfa * range) / 180);
+		double maxValue = this.minValue + range;
+		double value = MathUtils.normalize(alfa, 0, 180, minValue, maxValue);
+
 		int decimal = this.gauge.getDecimals();
-		if (decimal > 0) {
-			value *= 10 * decimal;
-			value = Math.round(value);
-			value /= 10 * decimal;
-		}
+
+		value *= Math.pow(10, decimal);
+		value = Math.round(value);
+		value /= Math.pow(10, decimal);
+
 		if (x < 0 && y < 0)
 			value = minValue;
 		else if (x > 0 && y < y)

@@ -14,3 +14,4 @@ otherResources
 .DS_Store
 /out
 /.nb-gradle/
+/bin/

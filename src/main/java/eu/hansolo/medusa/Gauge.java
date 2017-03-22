@@ -1108,7 +1108,6 @@ public class Gauge extends Control {
 		} else {
 			unit.set(UNIT);
 		}
-		System.out.println("Set unit:" + unit);
 	}
 
 	public StringProperty unitProperty() {
